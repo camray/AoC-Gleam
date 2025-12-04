@@ -9,28 +9,22 @@ pub fn part_2() {
 
   file
   |> string.split("\n")
-  |> process_battery_banks()
+  |> list.map(process_battery_bank)
+  |> int.sum
   |> echo
 
   Ok(Nil)
 }
 
-pub fn process_battery_banks(banks: List(String)) -> Int {
-  list.fold(banks, 0, fn(acc, bank) { acc + process_battery_bank(bank) })
-}
-
 pub fn process_battery_bank(bank: String) -> Int {
-  let #(processed_bank, _) =
-    list.range(11, 0)
-    |> list.fold(#("", 0), fn(acc, drop_ending) {
-      let #(accumulator_bank, start_from) = acc
-      let #(next_val, next_start_from) =
-        find_largest(bank, start_from:, drop_ending:)
+  list.range(11, 0)
+  |> list.fold(#("", 0), fn(acc, drop_ending) {
+    let #(result, start_from) = acc
+    let #(value, index) = find_largest(bank, start_from:, drop_ending:)
 
-      #(accumulator_bank <> next_val, next_start_from + 1)
-    })
-
-  processed_bank
+    #(result <> value, index + 1)
+  })
+  |> fn(res) { res.0 }
   |> int.parse
   |> result.unwrap(0)
 }
